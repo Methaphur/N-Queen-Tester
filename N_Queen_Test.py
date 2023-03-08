@@ -97,12 +97,14 @@ class Board:
 
     def user_inp(self):
         flag = True
+        r = "R"
         while flag and self.queen_counter() != len(self.board):
-            inp = input("Enter the cords (x,y) : ").upper()
-            if inp != "":
-                inp = inp+"00"
-                if (inp[4]) != "R":
-                    x , y = int(inp[0]),int(inp[2])
+            inp = eval(input("Enter the cords (x,y) : "))
+            #if inp != "":
+            if inp:
+                #inp = inp+"00"
+                if (inp[0]) != "R":
+                    x , y = int(inp[0]),int(inp[1])
                     if self.is_valid(x,y) == True:
                         self.place_queen(x,y)
                         self.print_board()
@@ -111,7 +113,7 @@ class Board:
                         print("Not a valid spot ... ")
                         print()
                 else:
-                    x , y = int(inp[0]) , int(inp[2])
+                    x , y = int(inp[1]) , int(inp[2])
                     self.remove_queen(x,y)
                     self.print_board()
                     print()
