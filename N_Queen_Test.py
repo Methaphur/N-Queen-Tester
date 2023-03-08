@@ -28,10 +28,12 @@ class Board:
     def is_valid(self,row,col):
         for i in range(len(self.board)):
             if self.board[i][col] == "Q":
+                print(f'({i},{col}) is conflicting')
                 return False
         
         for i in range(len(self.board)):
             if self.board[row][i] == "Q":
+                print(f'({row},{i}) is conflicting')
                 return False
         
         rows , column = row , col
@@ -39,6 +41,7 @@ class Board:
         # Left diagonal (up)
         while rows >= 0 and column >= 0:
             if self.board[rows][column] == "Q":
+                print(f'({rows},{column}) is conflicting')
                 return False
             rows    -= 1
             column  -= 1
@@ -48,6 +51,7 @@ class Board:
         rows , column = row , col
         while rows >= 0 and column < len(self.board):
             if self.board[rows][column] == "Q":
+                print(f'({rows},{column}) is conflicting')
                 return False
             rows   -= 1
             column += 1
@@ -57,6 +61,7 @@ class Board:
         rows ,column = row,col
         while rows < len(self.board) and column >= 0:
             if self.board[rows][column] == "Q":
+                print(f'({rows},{column}) is conflicting ')
                 return False
 
             rows   += 1
@@ -67,6 +72,7 @@ class Board:
         rows , column = row,col
         while rows < len(self.board) and column < len(self.board):
             if self.board[rows][column] == "Q":
+                print(f'({rows},{column}) is conflicting')
                 return False
         
             rows   += 1
@@ -80,7 +86,7 @@ class Board:
             inp = input("Enter the cords (x,y) : ")
             if inp != "":
                 x , y = int(inp[0]),int(inp[2])
-                if self.is_valid(x,y):
+                if self.is_valid(x,y) == True:
                     self.place_queen(x,y)
                     self.print_board()
                     print()
@@ -89,7 +95,10 @@ class Board:
                     print()
             else:
                 flag = False
+        if self.queen_counter() == len(self.board):
+            print("You have placed N Queens ")
 
+            
     def instructions(self):
         print(f'An N Queen tester')
         self.print_board()
@@ -102,7 +111,6 @@ class Board:
             for item in row:
                 if item == "Q":
                     count += 1
-        print('You have placed N queens ')
         return count
 N = int(input("Enter size of NxN chess board: "))
 chess = Board(N)
