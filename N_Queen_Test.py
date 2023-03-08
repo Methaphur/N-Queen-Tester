@@ -1,9 +1,10 @@
 from tabulate import tabulate
 
 class Board:
-    def __init__(self,N):
+    def __init__(self,N,super_queen):
         board = [[0 for i in range(N)] for i in range(N)]
         self.board = board
+        self.super_queen = super_queen
     
     def print_board(self):
         i = 0
@@ -24,16 +25,18 @@ class Board:
     def place_queen(self,row,col):
         self.board[row][col] = "Q"
 
+    def remove_queen(self,row,col):
+        self.board[row][col] = 0
 
     def is_valid(self,row,col):
         for i in range(len(self.board)):
             if self.board[i][col] == "Q":
-                print(f'({i},{col}) is conflicting')
+                print(f'({i},{col}) is column conflicting')
                 return False
         
         for i in range(len(self.board)):
             if self.board[row][i] == "Q":
-                print(f'({row},{i}) is conflicting')
+                print(f'({row},{i}) is row conflicting')
                 return False
         
         rows , column = row , col
@@ -41,7 +44,7 @@ class Board:
         # Left diagonal (up)
         while rows >= 0 and column >= 0:
             if self.board[rows][column] == "Q":
-                print(f'({rows},{column}) is conflicting')
+                print(f'({rows},{column}) in left diagonal is conflicting')
                 return False
             rows    -= 1
             column  -= 1
@@ -51,7 +54,7 @@ class Board:
         rows , column = row , col
         while rows >= 0 and column < len(self.board):
             if self.board[rows][column] == "Q":
-                print(f'({rows},{column}) is conflicting')
+                print(f'({rows},{column}) in right diagonal is conflicting')
                 return False
             rows   -= 1
             column += 1
@@ -61,7 +64,7 @@ class Board:
         rows ,column = row,col
         while rows < len(self.board) and column >= 0:
             if self.board[rows][column] == "Q":
-                print(f'({rows},{column}) is conflicting ')
+                print(f'({rows},{column}) in left diagonal is conflicting ')
                 return False
 
             rows   += 1
@@ -72,38 +75,59 @@ class Board:
         rows , column = row,col
         while rows < len(self.board) and column < len(self.board):
             if self.board[rows][column] == "Q":
-                print(f'({rows},{column}) is conflicting')
+                print(f'({rows},{column}) in right diagonal is conflicting')
                 return False
         
             rows   += 1
             column += 1
+
+        if self.super_queen == "y":
+                # Knight condition 
+            possible_moves = [(1,2),(1,-2),(-1,2),(-1,-2),(2,1),(2,-1),(-2,1),(-2,-1)]
+            for (x,y) in possible_moves:
+                x = x + row
+                y = y + col
+
+                if x>= 0 and y>= 0 and x < len(self.board) and y < len(self.board):
+                    if self.board[x][y] == "Q":
+                        print(f'({x},{y}) is knight conflicting')
+                        return False
 
         return True
 
     def user_inp(self):
         flag = True
         while flag and self.queen_counter() != len(self.board):
-            inp = input("Enter the cords (x,y) : ")
+            inp = input("Enter the cords (x,y) : ").upper()
             if inp != "":
-                x , y = int(inp[0]),int(inp[2])
-                if self.is_valid(x,y) == True:
-                    self.place_queen(x,y)
-                    self.print_board()
-                    print()
+                inp = inp+"00"
+                if (inp[4]) != "R":
+                    x , y = int(inp[0]),int(inp[2])
+                    if self.is_valid(x,y) == True:
+                        self.place_queen(x,y)
+                        self.print_board()
+                        print()
+                    else:
+                        print("Not a valid spot ... ")
+                        print()
                 else:
-                    print("Not a valid spot ... ")
+                    x , y = int(inp[0]) , int(inp[2])
+                    self.remove_queen(x,y)
+                    self.print_board()
                     print()
             else:
                 flag = False
         if self.queen_counter() == len(self.board):
             print("You have placed N Queens ")
 
-            
+
     def instructions(self):
         print(f'An N Queen tester')
         self.print_board()
         print(f'Enter the coordinates where u want to place the queen as (x,y)')
+        print('To remove a Queen type in cords with an extra argument r (x,y,r)')
         print()
+
 
     def queen_counter(self):
         count = 0
@@ -113,6 +137,7 @@ class Board:
                     count += 1
         return count
 N = int(input("Enter size of NxN chess board: "))
-chess = Board(N)
+super_queen = input("Do you want Super Queen rules (y/n): ").lower()
+chess = Board(N,super_queen)
 chess.instructions()
 chess.user_inp()
